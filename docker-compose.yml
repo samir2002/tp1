@@ -1,0 +1,39 @@
+services:
+
+  mariadb:
+    image: "mariadb:latest"
+    restart: 'always'
+    volumes:
+      - "./data:/var/lib/mysql/data"
+      - "./logs:/var/lib/mysql/logs"
+      - /var/docker/mariadb/conf:/etc/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "infob3db"
+      MYSQL_USER: "infob3"
+      MYSQL_PASSWORD: "infob3"
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    expose:
+      - "40001"
+    ports:
+      - "40001:80"
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306
+
+  wordpress:
+    image: wordpress
+    expose:
+      - 80
+    ports:
+      - 80:80
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_NAME: infob3db
+      WORDPRESS_DB_USER: infob3
+      WORDPRESS_DB_PASSWORD: infob3
+    volumes:
+      - ./wordpress:/var/www/html
